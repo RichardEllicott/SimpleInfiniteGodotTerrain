@@ -34,9 +34,9 @@ uniform_name = "roughness_texture"
 
 [sub_resource type="VisualShaderNodeVectorDecompose" id=52]
 
-[sub_resource type="VisualShaderNodeExpression" id=38]
-size = Vector2( 625.834, 659.589 )
-expression = "// THIS SCRIPT WORKS OUT VERTEX HEIGHT AND NORMAL (for the light)
+[sub_resource type="VisualShaderNodeExpression" id=58]
+size = Vector2( 739.08, 514.32 )
+expression = "
 
 vertex_out = VERTEX; // default return the same position through
 
@@ -48,6 +48,9 @@ main_vertex += offset; // extra offset added for debug
 
 float height = _get_height2(main_vertex.xz, terrain_scale.y); // we added scale to the heught
 vertex_out.y += height;
+
+
+vec3 kick_me = main_vertex;
 
 normal_out = _get_normal2(main_vertex, normal_scale * terrain_scale.y); // normals are too steep, so we have normal_scale"
 
@@ -195,15 +198,15 @@ void vertex() {
 // ScalarUniform:9
 	float n_out9p0 = normal_scale;
 
-// Expression:2
-	vec3 n_out2p0;
-	vec3 n_out2p1;
-	n_out2p0 = vec3(0.0, 0.0, 0.0);
-	n_out2p1 = vec3(0.0, 0.0, 0.0);
+// Expression:10
+	vec3 n_out10p0;
+	vec3 n_out10p1;
+	n_out10p0 = vec3(0.0, 0.0, 0.0);
+	n_out10p1 = vec3(0.0, 0.0, 0.0);
 	{
-		// THIS SCRIPT WORKS OUT VERTEX HEIGHT AND NORMAL (for the light)
 		
-		n_out2p0 = VERTEX; // default return the same position through
+		
+		n_out10p0 = VERTEX; // default return the same position through
 		
 		vec3 WORLD_VERTEX = (WORLD_MATRIX * vec4(VERTEX, 1.0)).xyz; // convert model pos to world pos
 		
@@ -212,14 +215,17 @@ void vertex() {
 		main_vertex += n_out8p0; // extra n_out8p0 added for debug
 		
 		float height = _get_height2(main_vertex.xz, n_out7p0.y); // we added scale to the heught
-		n_out2p0.y += height;
+		n_out10p0.y += height;
 		
-		n_out2p1 = _get_normal2(main_vertex, n_out9p0 * n_out7p0.y); // normals are too steep, so we have normal_scale
+		
+		vec3 kick_me = main_vertex;
+		
+		n_out10p1 = _get_normal2(main_vertex, n_out9p0 * n_out7p0.y); // normals are too steep, so we have normal_scale
 	}
 
 // Output:0
-	VERTEX = n_out2p0;
-	NORMAL = n_out2p1;
+	VERTEX = n_out10p0;
+	NORMAL = n_out10p1;
 
 }
 
@@ -292,27 +298,8 @@ void light() {
 
 }
 "
-graph_offset = Vector2( -283.431, -237.479 )
-nodes/vertex/0/position = Vector2( 640, 0 )
-nodes/vertex/2/node = SubResource( 38 )
-nodes/vertex/2/position = Vector2( 0, 0 )
-nodes/vertex/2/size = Vector2( 625.834, 659.589 )
-nodes/vertex/2/input_ports = "0,3,heightmap_texture;1,1,terrain_scale;2,1,offset;4,0,normal_scale;"
-nodes/vertex/2/output_ports = "0,1,vertex_out;1,1,normal_out;"
-nodes/vertex/2/expression = "// THIS SCRIPT WORKS OUT VERTEX HEIGHT AND NORMAL (for the light)
-
-vertex_out = VERTEX; // default return the same position through
-
-vec3 WORLD_VERTEX = (WORLD_MATRIX * vec4(VERTEX, 1.0)).xyz; // convert model pos to world pos
-
-vec3 main_vertex = WORLD_VERTEX; // WORLD COOR MODE
-main_vertex /= terrain_scale;
-main_vertex += offset; // extra offset added for debug
-
-float height = _get_height2(main_vertex.xz, terrain_scale.y); // we added scale to the heught
-vertex_out.y += height;
-
-normal_out = _get_normal2(main_vertex, normal_scale * terrain_scale.y); // normals are too steep, so we have normal_scale"
+graph_offset = Vector2( -246.013, 320.543 )
+nodes/vertex/0/position = Vector2( 920, 0 )
 nodes/vertex/3/node = SubResource( 39 )
 nodes/vertex/3/position = Vector2( -260, 0 )
 nodes/vertex/4/node = SubResource( 42 )
@@ -374,7 +361,29 @@ nodes/vertex/8/node = SubResource( 45 )
 nodes/vertex/8/position = Vector2( -480, 320 )
 nodes/vertex/9/node = SubResource( 53 )
 nodes/vertex/9/position = Vector2( -340, 460 )
-nodes/vertex/connections = PoolIntArray( 3, 2, 2, 0, 2, 0, 0, 0, 2, 1, 0, 1, 7, 0, 2, 1, 8, 0, 2, 2, 9, 0, 2, 3 )
+nodes/vertex/10/node = SubResource( 58 )
+nodes/vertex/10/position = Vector2( 0, 180 )
+nodes/vertex/10/size = Vector2( 739.08, 514.32 )
+nodes/vertex/10/input_ports = "0,4,heightmap_texture;1,1,terrain_scale;2,1,offset;3,0,normal_scale;"
+nodes/vertex/10/output_ports = "0,1,vertex_out;1,1,normal_out;"
+nodes/vertex/10/expression = "
+
+vertex_out = VERTEX; // default return the same position through
+
+vec3 WORLD_VERTEX = (WORLD_MATRIX * vec4(VERTEX, 1.0)).xyz; // convert model pos to world pos
+
+vec3 main_vertex = WORLD_VERTEX; // WORLD COOR MODE
+main_vertex /= terrain_scale;
+main_vertex += offset; // extra offset added for debug
+
+float height = _get_height2(main_vertex.xz, terrain_scale.y); // we added scale to the heught
+vertex_out.y += height;
+
+
+vec3 kick_me = main_vertex;
+
+normal_out = _get_normal2(main_vertex, normal_scale * terrain_scale.y); // normals are too steep, so we have normal_scale"
+nodes/vertex/connections = PoolIntArray( 7, 0, 10, 1, 8, 0, 10, 2, 3, 2, 10, 0, 10, 0, 0, 0, 10, 1, 0, 1, 9, 0, 10, 3 )
 nodes/fragment/0/position = Vector2( 1200, 20 )
 nodes/fragment/2/node = SubResource( 46 )
 nodes/fragment/2/position = Vector2( 800, -60 )
